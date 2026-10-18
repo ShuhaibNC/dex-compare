@@ -55,6 +55,27 @@ app.whenReady().then(async () => {
         const m = modClass.methods.find(mm => mm.status === "modified");
         x.showMethodDetail(modClass, m);
         const diffCells = document.querySelectorAll("#detail .diff .l, #detail .diff .r").length;
+        const progress = document.getElementById("progress");
+        const toolbar = document.getElementById("toolbar");
+        const progressBar = progress.querySelector(".progress-bar");
+        progress.classList.remove("hidden");
+        const progressSemantic = progress.getAttribute("role") === "progressbar";
+        const progressAfterToolbar = progress.offsetTop >= toolbar.offsetTop + toolbar.offsetHeight;
+        const progressBeforeSummary = progress.nextElementSibling.id === "summary";
+        x.updateComparisonProgress({
+          stage: "compare", current: 25, total: 100,
+          methodsCompleted: 20, methodsTotal: 80,
+          classesCompleted: 5, classesTotal: 20,
+          detail: "20/80 methods · 5/20 classes",
+        });
+        const progressDeterminate = progressBar.style.width === "25%"
+          && progress.getAttribute("aria-valuenow") === "25"
+          && document.getElementById("progressLabel").textContent.includes("20/80 methods");
+        const progressBarWorks = progressSemantic && progressAfterToolbar
+          && progressBeforeSummary && progressDeterminate;
+        const progressCanShow = getComputedStyle(progress).display !== "none";
+        progress.classList.add("hidden");
+        const progressCanHide = getComputedStyle(progress).display === "none";
         const search = document.getElementById("search");
         const renderFilteredTree = async (query) => {
           search.value = query;
@@ -121,6 +142,7 @@ app.whenReady().then(async () => {
           && getComputedStyle(document.getElementById("leftPath")).userSelect === "text"
           && getComputedStyle(aboutContent).userSelect === "text";
         return { ok:filtersWrap && controlsInHeader && debugNoteRemoved && unifiedByDefault
+                   && progressBarWorks && progressCanShow && progressCanHide
                    && helpIsFirst && menuIconsRemoved && helpMenuOpens
                    && aboutOpens && technicalInfoLoaded && authorOutsideScrollArea && vscodeDarkPalette
                    && sidebarStartsNearQuarter && splitterAccessible && splitterKeyboardResizable
@@ -128,6 +150,7 @@ app.whenReady().then(async () => {
                    && selectiveTextSelection,
                  nodes, meta: document.getElementById("metaLine").textContent,
                  addedPill: pills, diffCells, filtersHeight, detailHeight,
+                 progressBarWorks, progressDeterminate, progressCanShow, progressCanHide,
                  controlsInHeader, debugNoteRemoved, unifiedByDefault, helpIsFirst,
                  menuIconsRemoved, helpMenuOpens, aboutOpens,
                  technicalInfoLoaded, authorOutsideScrollArea, vscodeDarkPalette,

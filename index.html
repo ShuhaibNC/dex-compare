@@ -34,7 +34,10 @@
     </div>
   <button id="compareBtn" disabled>Compare</button>
 </div>
-<div id="progress" class="hidden"><div class="progress-bar"></div></div>
+<div id="progress" class="hidden" role="progressbar" aria-label="Comparing files" aria-valuetext="Comparison in progress">
+  <div id="progressLabel">Preparing comparison…</div>
+  <div class="progress-track"><div class="progress-bar"></div></div>
+</div>
 <div id="summary" class="hidden">
     <div class="summary-group">
       <span class="summary-title">Classes</span>

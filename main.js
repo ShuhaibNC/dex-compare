@@ -2,10 +2,57 @@
 
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
-const { comparePaths } = require("./lib/compare");
+const { Worker } = require("worker_threads");
 
 let win = null;
-let session = null;
+let compareWorker = null;
+let nextWorkerRequestId = 1;
+const workerRequests = new Map();
+
+function getCompareWorker() {
+  if (compareWorker) return compareWorker;
+  const worker = new Worker(path.join(__dirname, "compare-worker.js"));
+  compareWorker = worker;
+  worker.on("message", (message) => {
+    const request = workerRequests.get(message.id);
+    if (!request) return;
+    if (message.progress) {
+      request.onProgress(message.progress);
+      return;
+    }
+    workerRequests.delete(message.id);
+    if (message.error) request.reject(new Error(message.error));
+    else request.resolve(message.result);
+  });
+  worker.on("error", (error) => {
+    for (const request of workerRequests.values()) request.reject(error);
+    workerRequests.clear();
+    if (compareWorker === worker) compareWorker = null;
+  });
+  worker.on("exit", (code) => {
+    if (compareWorker !== worker) return;
+    compareWorker = null;
+    if (code === 0) return;
+    const error = new Error(`Comparison worker stopped unexpectedly (exit code ${code})`);
+    for (const request of workerRequests.values()) request.reject(error);
+    workerRequests.clear();
+  });
+  return worker;
+}
+
+function requestCompareWorker(type, payload, onProgress) {
+  const worker = getCompareWorker();
+  const id = nextWorkerRequestId++;
+  return new Promise((resolve, reject) => {
+    workerRequests.set(id, { resolve, reject, onProgress: onProgress || (() => {}) });
+    try {
+      worker.postMessage({ id, type, ...payload });
+    } catch (error) {
+      workerRequests.delete(id);
+      reject(error);
+    }
+  });
+}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -52,19 +99,22 @@ ipcMain.handle("dialog:openDex", async () => {
   return res.filePaths[0];
 });
 
-ipcMain.handle("compare:run", async (_e, leftPath, rightPath) => {
-  session = comparePaths(leftPath, rightPath);
-  return session.result;
+ipcMain.handle("compare:run", async (event, leftPath, rightPath) => {
+  return requestCompareWorker(
+    "compare",
+    { leftPath, rightPath },
+    (progress) => {
+      if (!event.sender.isDestroyed()) event.sender.send("compare:progress", progress);
+    }
+  );
 });
 
 ipcMain.handle("get:methodSmali", async (_e, side, descriptor, key) => {
-  if (!session) return null;
-  return session.getMethodSmali(side, descriptor, key);
+  return requestCompareWorker("methodSmali", { side, descriptor, key });
 });
 
 ipcMain.handle("get:classSmali", async (_e, side, descriptor) => {
-  if (!session) return null;
-  return session.getClassSmali(side, descriptor);
+  return requestCompareWorker("classSmali", { side, descriptor });
 });
 
 ipcMain.handle("app:info", () => ({

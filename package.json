@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "cli": "node cli.js",
-    "test": "node test-dex.js && electron test-ui.js",
+    "test": "node test-dex.js && node test-worker.js && electron test-ui.js",
     "dist": "electron-builder --win"
   },
   "build": {
@@ -16,6 +16,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "compare-worker.js",
       "renderer.js",
       "index.html",
       "styles.css",

@@ -2,6 +2,7 @@
 
 const assert = require("assert");
 const { DexFile } = require("./lib/dex");
+const { diffLines } = require("./lib/mydiff");
 
 function disassemble22c(op, index) {
   const dex = Object.create(DexFile.prototype);
@@ -69,5 +70,11 @@ assert(filledArrayRange.comparison[0].includes("filled-new-array/range {v0, v1},
 const invoke = disassemble35c(0x6e, [0x6e, 0x10, 0, 0, 2, 0], 3, 4);
 assert(invoke.smali.includes("invoke-virtual {v2}, Lsample/Owner;->method(I)V"));
 assert(invoke.comparison[0].includes("invoke-virtual {v0}, Lsample/Owner;->method(I)V"));
+
+const farApartLines = [
+  Array.from({ length: 700 }, (_, i) => `left-${i}`),
+  Array.from({ length: 700 }, (_, i) => `right-${i}`),
+];
+assert.strictEqual(diffLines(farApartLines[0], farApartLines[1], 6000), null);
 
 console.log("DEX reference decoding tests passed");

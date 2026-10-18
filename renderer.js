@@ -133,10 +133,32 @@ $("swap").onclick = () => {
 function updateCompareBtn() {
   $("compareBtn").disabled = !(state.leftPath && state.rightPath);
 }
+function updateComparisonProgress(progress) {
+  const current = Number.isFinite(progress.current) ? progress.current : 0;
+  const total = Number.isFinite(progress.total) ? progress.total : 0;
+  const percent = total > 0 ? Math.max(0, Math.min(100, Math.floor((current / total) * 100))) : 0;
+  const bar = $("progress").querySelector(".progress-bar");
+  bar.style.width = `${percent}%`;
+  $("progress").setAttribute("aria-valuemin", "0");
+  $("progress").setAttribute("aria-valuemax", "100");
+  $("progress").setAttribute("aria-valuenow", String(percent));
+  if (progress.stage === "compare") {
+    $("progressLabel").textContent = `Comparing: ${progress.detail} · ${percent}%`;
+  } else if (progress.stage === "parse") {
+    const dexNumber = progress.dexTotal ? ` (DEX ${progress.dexIndex}/${progress.dexTotal})` : "";
+    $("progressLabel").textContent = `Parsing ${progress.detail}${dexNumber} · ${percent}%`;
+  } else {
+    $("progressLabel").textContent = `${progress.detail} · ${percent}%`;
+  }
+  $("progress").setAttribute("aria-valuetext", $("progressLabel").textContent);
+}
+window.dexapi.onCompareProgress(updateComparisonProgress);
 $("compareBtn").onclick = async () => {
     $("compareBtn").disabled = true;
     $("compareBtn").textContent = "Comparing…";
+    updateComparisonProgress({ stage: "load", current: 0, total: 1, detail: "Starting comparison" });
     $("progress").classList.remove("hidden");
+    $("main").setAttribute("aria-busy", "true");
     try {
       const res = await window.dexapi.compare(state.leftPath, state.rightPath);
       state.result = res;
@@ -146,6 +168,7 @@ $("compareBtn").onclick = async () => {
       alert("Compare failed: " + (e && e.message ? e.message : e));
     } finally {
       $("progress").classList.add("hidden");
+      $("main").removeAttribute("aria-busy");
       $("compareBtn").disabled = false;
       $("compareBtn").textContent = "Compare";
     }
@@ -510,4 +533,4 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeHelpMenu();
 });
 
-window.__dex = { state, renderSummary, renderTree, showClassDetail, showMethodDetail, showFieldDetail, refreshDiffNav, gotoDiff, smaliLineHTML };
+window.__dex = { state, renderSummary, renderTree, showClassDetail, showMethodDetail, showFieldDetail, refreshDiffNav, gotoDiff, smaliLineHTML, updateComparisonProgress };
