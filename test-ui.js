@@ -45,8 +45,15 @@ app.whenReady().then(async () => {
         const m = modClass.methods.find(mm => mm.status === "modified");
         x.showMethodDetail(modClass, m);
         const diffCells = document.querySelectorAll("#detail .diff .l, #detail .diff .r").length;
-        return { ok:true, nodes, meta: document.getElementById("metaLine").textContent,
-                 addedPill: pills, diffCells };
+        const filtersHeight = document.getElementById("filters").getBoundingClientRect().height;
+        const detailHead = document.getElementById("detail-head");
+        const detailHeight = detailHead.getBoundingClientRect().height;
+        const controlsInHeader = document.getElementById("diff-controls").parentElement === detailHead;
+        const debugNoteRemoved = !document.querySelector(".norm-note");
+        return { ok:filtersHeight === detailHeight && controlsInHeader && debugNoteRemoved,
+                 nodes, meta: document.getElementById("metaLine").textContent,
+                 addedPill: pills, diffCells, filtersHeight, detailHeight,
+                 controlsInHeader, debugNoteRemoved };
       } catch (e) { return { ok:false, err: String(e && e.stack || e) }; }
     })()
   `;

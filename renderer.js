@@ -280,10 +280,10 @@ function selectRow(row) {
 // ---------------------------------------------------------------------------
 // Detail panes
 // ---------------------------------------------------------------------------
-function setHead(text) { $("detail-head").textContent = text; }
+function setHead(text) { $("detailTitle").textContent = text; }
 
 // ---------------------------------------------------------------------------
-// Diff navigation (up/down buttons on the code toolbar)
+// Diff navigation (up/down buttons in the detail header)
 // ---------------------------------------------------------------------------
 const diffNav = { items: [], idx: -1 };
 
