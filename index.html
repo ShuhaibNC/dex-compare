@@ -7,6 +7,19 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="app-menu">
+    <div class="help-menu">
+      <button id="helpMenuButton" aria-haspopup="true" aria-expanded="false">
+        Help
+      </button>
+      <div id="helpMenuItems" class="menu-items hidden">
+        <strong>Quick help</strong>
+        <p>Choose a package on each side, then select Compare to view class, method, and field changes.</p>
+        <p>Select an item to inspect its Smali diff. Use F7 for the next difference and Shift+F7 for the previous one.</p>
+      </div>
+    </div>
+    <button id="aboutMenuItem" class="titlebar-menu-button">About</button>
+  </div>
   <div id="toolbar">
     <div class="file-pick">
       <span class="label old">LEFT (old)</span>
@@ -54,7 +67,7 @@
         <input id="search" type="text" placeholder="Filter by class / method / field…" />
         <label class="chk"><input type="checkbox" id="onlyDiff" checked /> Only differences</label>
         <label class="chk"><input type="checkbox" id="showSame" /> Show unchanged</label>
-        <label class="chk"><input type="checkbox" id="unifiedDiff" /> Unified diff</label>
+        <label class="chk"><input type="checkbox" id="unifiedDiff" checked /> Unified diff</label>
       </div>
       <div id="tree" class="scroll"></div>
       <div id="treeStatus" class="status"></div>
@@ -71,6 +84,48 @@
       <div id="detail" class="scroll"></div>
     </div>
   </div>
+
+  <dialog id="aboutDialog" aria-labelledby="aboutTitle">
+    <div class="about-dialog">
+      <header class="about-header">
+        <div>
+          <h1 id="aboutTitle">About APK Compare</h1>
+          <p>Technical information</p>
+        </div>
+        <button id="closeAbout" class="about-close" aria-label="Close">×</button>
+      </header>
+      <div id="aboutContent" class="about-content">
+        <section>
+          <h2>Application</h2>
+          <dl class="about-details">
+            <dt>Version</dt><dd id="aboutVersion">Loading…</dd>
+            <dt>Platform</dt><dd id="aboutPlatform">Loading…</dd>
+            <dt>Electron</dt><dd id="aboutElectron">Loading…</dd>
+            <dt>Chromium</dt><dd id="aboutChromium">Loading…</dd>
+            <dt>Node.js</dt><dd id="aboutNode">Loading…</dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Supported input files</h2>
+          <p>APK, XAPK, APKS, APKM, ZIP, and DEX files. APK bundles and split APKs are read directly; no Android SDK or external decompiler is required.</p>
+        </section>
+        <section>
+          <h2>Comparison engine</h2>
+          <p>Compares DEX class, method, and field definitions, then disassembles method bytecode for normalized Smali comparison.</p>
+          <ul>
+            <li>Ignores debug metadata, comments, and no-operation instructions.</li>
+            <li>Normalizes register numbering and equivalent constant, branch, and invoke encodings.</li>
+            <li>Shows method changes as unified or side-by-side diffs.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Implementation</h2>
+          <p>Desktop interface powered by Electron. The DEX parser, archive reader, comparison engine, and Smali formatter are implemented in JavaScript.</p>
+        </section>
+      </div>
+      <footer class="about-footer">Made by ShuhaibNC</footer>
+    </div>
+  </dialog>
 
   <script src="renderer.js"></script>
 </body>

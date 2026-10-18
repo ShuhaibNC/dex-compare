@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "cli": "node cli.js",
-    "test": "electron test-ui.js",
+    "test": "node test-dex.js && electron test-ui.js",
     "dist": "electron-builder --win"
   },
   "build": {

@@ -433,4 +433,37 @@ $("unifiedDiff").onchange = () => {
   }
 };
 
+const helpMenuButton = $("helpMenuButton");
+const helpMenuItems = $("helpMenuItems");
+const aboutDialog = $("aboutDialog");
+function closeHelpMenu() {
+  helpMenuItems.classList.add("hidden");
+  helpMenuButton.setAttribute("aria-expanded", "false");
+}
+helpMenuButton.onclick = () => {
+  const isOpen = !helpMenuItems.classList.contains("hidden");
+  helpMenuItems.classList.toggle("hidden", isOpen);
+  helpMenuButton.setAttribute("aria-expanded", String(!isOpen));
+};
+$("aboutMenuItem").onclick = async () => {
+  closeHelpMenu();
+  const info = await window.dexapi.aboutInfo();
+  $("aboutVersion").textContent = info.version;
+  $("aboutPlatform").textContent = info.platform;
+  $("aboutElectron").textContent = info.electron;
+  $("aboutChromium").textContent = info.chromium;
+  $("aboutNode").textContent = info.node;
+  aboutDialog.showModal();
+};
+$("closeAbout").onclick = () => aboutDialog.close();
+aboutDialog.onclick = (event) => {
+  if (event.target === aboutDialog) aboutDialog.close();
+};
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".help-menu")) closeHelpMenu();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeHelpMenu();
+});
+
 window.__dex = { state, renderSummary, renderTree, showClassDetail, showMethodDetail, showFieldDetail, refreshDiffNav, gotoDiff, smaliLineHTML };

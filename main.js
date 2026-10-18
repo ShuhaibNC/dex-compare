@@ -13,6 +13,12 @@ function createWindow() {
     height: 900,
     backgroundColor: "#1e1f22",
     title: "APK Compare",
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#26282c",
+      symbolColor: "#d7dae0",
+      height: 34,
+    },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -60,3 +66,11 @@ ipcMain.handle("get:classSmali", async (_e, side, descriptor) => {
   if (!session) return null;
   return session.getClassSmali(side, descriptor);
 });
+
+ipcMain.handle("app:info", () => ({
+  version: app.getVersion(),
+  platform: process.platform,
+  electron: process.versions.electron,
+  chromium: process.versions.chrome,
+  node: process.versions.node,
+}));
