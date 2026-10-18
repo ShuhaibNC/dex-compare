@@ -22,6 +22,27 @@ function disassemble22c(op, index) {
   };
 }
 
+function disassemble35c(op, instructions, insnsSize, registersSize) {
+  const dex = Object.create(DexFile.prototype);
+  dex.buf = Buffer.from(instructions);
+  dex.types = ["Lsample/Owner;", "[Lsample/Item;"];
+  dex.strings = ["unused", "field", "method"];
+  dex.fieldIds = [{ classIdx: 0, typeIdx: 1, nameIdx: 1 }];
+  dex.protos = [{ params: ["I"], returnType: "V" }];
+  dex.methodIds = [{ classIdx: 0, protoIdx: 0, nameIdx: 2 }];
+  const method = {
+    access: 0,
+    name: "sample",
+    params: [],
+    returnType: "V",
+    code: { registersSize, insnsOff: 0, insnsSize, handlers: [] },
+  };
+  return {
+    smali: dex.methodSmali(method),
+    comparison: dex.methodCompareLines(method),
+  };
+}
+
 for (const [opcode, mnemonic, typeIndex] of [
   [0x20, "instance-of", 1],
   [0x23, "new-array", 1],
@@ -37,4 +58,16 @@ const fieldOutput = disassemble22c(0x54, 0);
 assert(fieldOutput.smali.includes("iget-object v5, v6, Ltest/Owner;->f:[Le2/q1;"));
 assert(fieldOutput.comparison[0].includes("iget-object v0, v1, Ltest/Owner;->f:[Le2/q1;"));
 
-console.log("DEX 22c reference tests passed");
+const filledArray = disassemble35c(0x24, [0x24, 0x10, 1, 0, 2, 0], 3, 4);
+assert(filledArray.smali.includes("filled-new-array {v2}, [Lsample/Item;"));
+assert(filledArray.comparison[0].includes("filled-new-array {v0}, [Lsample/Item;"));
+
+const filledArrayRange = disassemble35c(0x25, [0x25, 2, 1, 0, 2, 0], 3, 4);
+assert(filledArrayRange.smali.includes("filled-new-array/range {v2, v3}, [Lsample/Item;"));
+assert(filledArrayRange.comparison[0].includes("filled-new-array/range {v0, v1}, [Lsample/Item;"));
+
+const invoke = disassemble35c(0x6e, [0x6e, 0x10, 0, 0, 2, 0], 3, 4);
+assert(invoke.smali.includes("invoke-virtual {v2}, Lsample/Owner;->method(I)V"));
+assert(invoke.comparison[0].includes("invoke-virtual {v0}, Lsample/Owner;->method(I)V"));
+
+console.log("DEX reference decoding tests passed");
