@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>APK Compare</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toolbar">
+    <div class="file-pick">
+      <span class="label old">LEFT (old)</span>
+      <input id="leftPath" type="text" placeholder="no APK / XAPK / APKS / APKM / DEX selected" readonly />
+      <button id="pickLeft">Choose…</button>
+    </div>
+    <button id="swap" title="Swap sides">&#8646;</button>
+    <div class="file-pick">
+      <span class="label new">RIGHT (new)</span>
+      <input id="rightPath" type="text" placeholder="no APK / XAPK / APKS / APKM / DEX selected" readonly />
+      <button id="pickRight">Choose…</button>
+    </div>
+  <button id="compareBtn" disabled>Compare</button>
+</div>
+<div id="progress" class="hidden"><div class="progress-bar"></div></div>
+<div id="summary" class="hidden">
+    <div class="summary-group">
+      <span class="summary-title">Classes</span>
+      <span class="pill modified" data-k="classes.modified">0</span>
+      <span class="pill added" data-k="classes.added">0</span>
+      <span class="pill removed" data-k="classes.removed">0</span>
+      <span class="pill same" data-k="classes.same">0</span>
+    </div>
+    <div class="summary-group">
+      <span class="summary-title">Methods</span>
+      <span class="pill modified" data-k="methods.modified">0</span>
+      <span class="pill added" data-k="methods.added">0</span>
+      <span class="pill removed" data-k="methods.removed">0</span>
+      <span class="pill same" data-k="methods.same">0</span>
+    </div>
+    <div class="summary-group">
+      <span class="summary-title">Fields</span>
+      <span class="pill modified" data-k="fields.modified">0</span>
+      <span class="pill added" data-k="fields.added">0</span>
+      <span class="pill removed" data-k="fields.removed">0</span>
+      <span class="pill same" data-k="fields.same">0</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="meta" id="metaLine"></div>
+  </div>
+
+  <div id="main">
+    <div id="left-pane">
+      <div id="filters">
+        <input id="search" type="text" placeholder="Filter by class / method / field…" />
+        <label class="chk"><input type="checkbox" id="onlyDiff" checked /> Only differences</label>
+        <label class="chk"><input type="checkbox" id="showSame" /> Show unchanged</label>
+        <label class="chk"><input type="checkbox" id="unifiedDiff" /> Unified diff</label>
+      </div>
+      <div id="tree" class="scroll"></div>
+      <div id="treeStatus" class="status"></div>
+    </div>
+    <div id="right-pane">
+      <div id="detail-head">Select a class, method, or field</div>
+      <div id="code-bar">
+        <button id="diffPrev" title="Previous difference (Shift+F7)" disabled>&#9650;</button>
+        <button id="diffNext" title="Next difference (F7)" disabled>&#9660;</button>
+        <span id="diffPos"></span>
+        <span class="spacer"></span>
+        <span id="normNote" class="norm-note">ignores debug info, comments, nops, registers, equivalent encodings</span>
+      </div>
+      <div id="detail" class="scroll"></div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "name": "dex-compare-tool",
+  "version": "1.1.0",
+  "description": "Windows GUI DEX comparison tool (MT-style: classes/methods/fields added/removed/changed with smali diff)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "cli": "node cli.js",
+    "test": "electron test-ui.js",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.dexcompare.tool",
+    "productName": "DexCompare",
+    "directories": { "output": "dist" },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "lib/**/*"
+    ],
+    "win": {
+      "target": ["portable", "nsis"]
+    },
+    "portable": {
+      "artifactName": "DexCompare-${version}-portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "DexCompare-${version}-setup.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^26.15.3"
+  },
+  "allowScripts": {
+    "electron@31.7.7": true
+  }
+}
