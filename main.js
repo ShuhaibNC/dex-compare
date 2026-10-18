@@ -11,12 +11,12 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1400,
     height: 900,
-    backgroundColor: "#1e1f22",
+    backgroundColor: "#1f1f1f",
     title: "APK Compare",
     titleBarStyle: "hidden",
     titleBarOverlay: {
-      color: "#26282c",
-      symbolColor: "#d7dae0",
+      color: "#181818",
+      symbolColor: "#cccccc",
       height: 34,
     },
     webPreferences: {

@@ -229,7 +229,8 @@ function classNode(c, q) {
     if (built) return;
     built = true;
     const onlyDiff = $("onlyDiff").checked && !$("showSame").checked;
-    const fq = (k) => (!q || k.toLowerCase().includes(q));
+    const classMatchesQuery = q && c.descriptor.toLowerCase().includes(q);
+    const fq = (k) => (!q || classMatchesQuery || k.toLowerCase().includes(q));
     const fields = c.fields.filter((f) => (!onlyDiff || f.status !== "same") && fq(f.key));
     const methods = c.methods.filter((m) => (!onlyDiff || m.status !== "same") && fq(m.key));
     if (fields.length) {
@@ -432,6 +433,49 @@ $("unifiedDiff").onchange = () => {
     else if (sel._ctx.kind === "class") showClassDetail(sel._ctx.cls);
   }
 };
+
+const paneSplitter = $("pane-splitter");
+const mainPane = $("main");
+const MIN_SIDEBAR_WIDTH = 220;
+const MIN_DETAIL_WIDTH = 280;
+let resizingSidebar = false;
+
+function setSidebarWidth(width) {
+  const mainWidth = mainPane.getBoundingClientRect().width;
+  const maxWidth = Math.max(MIN_SIDEBAR_WIDTH, mainWidth - MIN_DETAIL_WIDTH - paneSplitter.offsetWidth);
+  const clampedWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(width, maxWidth));
+  mainPane.style.setProperty("--sidebar-width", `${(clampedWidth / mainWidth) * 100}%`);
+  paneSplitter.setAttribute("aria-valuemax", String(Math.floor(maxWidth)));
+  paneSplitter.setAttribute("aria-valuenow", String(Math.round(clampedWidth)));
+}
+
+paneSplitter.onpointerdown = (event) => {
+  resizingSidebar = true;
+  paneSplitter.focus();
+  document.body.style.cursor = "col-resize";
+  document.body.style.userSelect = "none";
+  event.preventDefault();
+};
+window.addEventListener("pointermove", (event) => {
+  if (!resizingSidebar) return;
+  const mainLeft = mainPane.getBoundingClientRect().left;
+  setSidebarWidth(event.clientX - mainLeft);
+});
+window.addEventListener("pointerup", () => {
+  resizingSidebar = false;
+  document.body.style.cursor = "";
+  document.body.style.userSelect = "";
+});
+paneSplitter.onkeydown = (event) => {
+  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  event.preventDefault();
+  const currentWidth = $("left-pane").getBoundingClientRect().width;
+  setSidebarWidth(currentWidth + (event.key === "ArrowRight" ? 16 : -16));
+};
+window.addEventListener("resize", () => {
+  setSidebarWidth($("left-pane").getBoundingClientRect().width);
+});
+setSidebarWidth(mainPane.getBoundingClientRect().width * 0.27);
 
 const helpMenuButton = $("helpMenuButton");
 const helpMenuItems = $("helpMenuItems");

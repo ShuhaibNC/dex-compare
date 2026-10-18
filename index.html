@@ -63,6 +63,7 @@
 
   <div id="main">
     <div id="left-pane">
+      <div id="tree-heading">CLASSES</div>
       <div id="filters">
         <input id="search" type="text" placeholder="Filter by class / method / field…" />
         <label class="chk"><input type="checkbox" id="onlyDiff" checked /> Only differences</label>
@@ -72,6 +73,8 @@
       <div id="tree" class="scroll"></div>
       <div id="treeStatus" class="status"></div>
     </div>
+    <div id="pane-splitter" role="separator" aria-label="Resize class panel" aria-orientation="vertical"
+      aria-valuemin="220" aria-valuenow="25" aria-valuemax="60" tabindex="0"></div>
     <div id="right-pane">
       <div id="detail-head">
         <span id="detailTitle">Select a class, method, or field</span>
