@@ -120,7 +120,11 @@ app.whenReady().then(async () => {
         const aboutContent = document.getElementById("aboutContent");
         const aboutFooter = document.querySelector(".about-footer");
         const appMenu = document.getElementById("app-menu");
-        const helpIsFirst = appMenu.firstElementChild.classList.contains("help-menu");
+        const appLogo = document.getElementById("appLogo");
+        const logoIsFirst = appMenu.firstElementChild === appLogo
+          && appLogo.getAttribute("src") === "icon.png";
+        const logoLoaded = appLogo.complete && appLogo.naturalWidth > 0;
+        const helpFollowsLogo = appLogo.nextElementSibling.classList.contains("help-menu");
         const menuIconsRemoved = !appMenu.querySelector(".about-icon, .help-icon");
         helpButton.click();
         const helpMenuOpens = !document.getElementById("helpMenuItems").classList.contains("hidden");
@@ -143,7 +147,7 @@ app.whenReady().then(async () => {
           && getComputedStyle(aboutContent).userSelect === "text";
         return { ok:filtersWrap && controlsInHeader && debugNoteRemoved && unifiedByDefault
                    && progressBarWorks && progressCanShow && progressCanHide
-                   && helpIsFirst && menuIconsRemoved && helpMenuOpens
+                   && logoIsFirst && logoLoaded && helpFollowsLogo && menuIconsRemoved && helpMenuOpens
                    && aboutOpens && technicalInfoLoaded && authorOutsideScrollArea && vscodeDarkPalette
                    && sidebarStartsNearQuarter && splitterAccessible && splitterKeyboardResizable
                    && explorerStyleHeader && classFilterExpandsMembers && methodFilterShowsMatch
@@ -151,7 +155,7 @@ app.whenReady().then(async () => {
                  nodes, meta: document.getElementById("metaLine").textContent,
                  addedPill: pills, diffCells, filtersHeight, detailHeight,
                  progressBarWorks, progressDeterminate, progressCanShow, progressCanHide,
-                 controlsInHeader, debugNoteRemoved, unifiedByDefault, helpIsFirst,
+                 controlsInHeader, debugNoteRemoved, unifiedByDefault, logoIsFirst, logoLoaded, helpFollowsLogo,
                  menuIconsRemoved, helpMenuOpens, aboutOpens,
                  technicalInfoLoaded, authorOutsideScrollArea, vscodeDarkPalette,
                  initialSidebarWidth, mainWidth, sidebarStartsNearQuarter, filtersWrap,

@@ -60,6 +60,7 @@ function createWindow() {
     height: 900,
     backgroundColor: "#1f1f1f",
     title: "APK Compare",
+    icon: path.join(__dirname, "icon.png"),
     titleBarStyle: "hidden",
     titleBarOverlay: {
       color: "#181818",

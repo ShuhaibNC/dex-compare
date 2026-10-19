@@ -54,6 +54,7 @@ input[type=text]:focus { outline: 1px solid var(--accent); outline-offset: -1px;
   border-bottom: 1px solid var(--border); background: var(--bg2);
   -webkit-app-region: drag;
 }
+#appLogo { width: 24px; height: 24px; margin-right: 4px; object-fit: contain; pointer-events: none; }
 .help-menu { position: relative; }
 #helpMenuButton, .titlebar-menu-button {
   display: flex; align-items: center; gap: 7px; padding: 4px 10px;

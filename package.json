@@ -19,10 +19,12 @@
       "compare-worker.js",
       "renderer.js",
       "index.html",
+      "icon.png",
       "styles.css",
       "lib/**/*"
     ],
     "win": {
+      "icon": "icon.ico",
       "target": ["portable", "nsis"]
     },
     "portable": {
